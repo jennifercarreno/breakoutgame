@@ -1,3 +1,7 @@
+import Brick from './src/brick.js';
+import Lives from './src/lives.js';
+import Score from './src/score.js';
+
 // canvas variables
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
@@ -8,7 +12,7 @@ let y = canvas.height - 30;
 const ballRadius = 10;
 let dx = 2;
 let dy = -2;
-let color = `# ${Math.floor(Math.random() * 16777215).toString(16)}`;
+const color = `# ${Math.floor(Math.random() * 16777215).toString(16)}`;
 
 // paddle variables
 const paddleHeight = 10;
@@ -30,7 +34,7 @@ for (let c = 0; c < brickColumnCount; c += 1) {
   for (let r = 0; r < brickRowCount; r += 1) {
     const x = c * (brickWidth + brickPadding) + brickOffsetLeft;
     const y = r * (brickHeight + brickPadding) + brickOffsetTop;
-    bricks[c][r] = { x, y, status: 1 };
+    bricks[c][r] = new Brick(x, y, brickWidth, brickHeight, 'red');
   }
 }
 
@@ -39,6 +43,8 @@ let rightPressed = false;
 let leftPressed = false;
 let score = 0;
 let lives = 3;
+const scoreDisplay = new Score(8, 20, score, '16px Arial', '#e0218a');
+const livesDisplay = new Lives(canvas.width - 65, 20, lives, '16px Arial', '#e0218a');
 
 function collisionDetection() {
   for (let c = 0; c < brickColumnCount; c += 1) {
@@ -86,26 +92,10 @@ function drawBricks() {
   for (let c = 0; c < brickColumnCount; c += 1) {
     for (let r = 0; r < brickRowCount; r += 1) {
       if (bricks[c][r].status === 1) {
-        ctx.beginPath();
-        ctx.rect(bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
-        ctx.fillStyle = '#e0218a';
-        ctx.fill();
-        ctx.closePath();
+        bricks[c][r].render(ctx);
       }
     }
   }
-}
-
-function drawScore() {
-  ctx.font = '16px Arial';
-  ctx.fillStyle = '#0095DD';
-  ctx.fillText(`Score: ${score}`, 8, 20);
-}
-
-function drawLives() {
-  ctx.font = '16px Arial';
-  ctx.fillStyle = '#0095DD';
-  ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 20);
 }
 
 function draw() {
@@ -113,14 +103,13 @@ function draw() {
   drawBricks();
   drawBall();
   drawPaddle();
-  drawScore();
-  drawLives();
+  livesDisplay.render(ctx);
+  scoreDisplay.render(ctx);
   collisionDetection();
 
   // bouncing controls
   if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
     dx = -dx;
-    color = Math.floor(Math.random() * 16777215).toString(16);
   }
 
   if (y + dy < ballRadius) {
