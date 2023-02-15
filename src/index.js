@@ -32,9 +32,9 @@ const bricks = [];
 for (let c = 0; c < brickColumnCount; c += 1) {
   bricks[c] = [];
   for (let r = 0; r < brickRowCount; r += 1) {
-    const x = c * (brickWidth + brickPadding) + brickOffsetLeft;
-    const y = r * (brickHeight + brickPadding) + brickOffsetTop;
-    bricks[c][r] = new Brick(x, y, brickWidth, brickHeight, 'red');
+    const brickx = c * (brickWidth + brickPadding) + brickOffsetLeft;
+    const bricky = r * (brickHeight + brickPadding) + brickOffsetTop;
+    bricks[c][r] = new Brick(brickx, bricky, brickWidth, brickHeight, 'red', 1);
   }
 }
 
